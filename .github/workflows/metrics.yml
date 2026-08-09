@@ -2,12 +2,9 @@ name: metrics
 
 # Publishes to a `metrics` branch that is rewritten from scratch on every run, so
 # this repository keeps exactly one machine commit rather than one per reading.
-# The schedule only fires from the default branch; the push trigger is what makes
-# the workflow testable from a feature branch.
+# Both triggers only fire from the default branch, which is where this lives.
 
 on:
-  push:
-    branches: [profile-duotone]
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
