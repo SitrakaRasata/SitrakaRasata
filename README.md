@@ -1,6 +1,9 @@
 <div align="center">
-  <img src="assets/banner.svg" width="100%"
-       alt="Sitraka Rasatarivony — Full Stack Developer, System Design. 4s to 300ms, 10+ modules in production, DevSecOps. Core stack: TypeScript, NestJS, React, PostgreSQL.">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner.svg">
+    <img src="assets/banner-light.svg" width="100%"
+         alt="Sitraka Rasatarivony — Full Stack Developer, System Design. 4s to 300ms, 10+ modules in production, DevSecOps. Core stack: TypeScript, NestJS, React, PostgreSQL.">
+  </picture>
 </div>
 
 Three years building and shipping backend and frontend systems in production,
@@ -66,12 +69,67 @@ AI-assisted development every day (Claude Code).
 
 ## Projects
 
-**[tournament-engine](https://github.com/SitrakaRasata/tournament-engine)** — TypeScript · Angular · Node.js
-Tournament management engine built under time constraint: bracket logic, round
-handling, automated ranking.
+Three of them. Each is here for one idea it had to get right.
 
-**[movie-app](https://github.com/SitrakaRasata/movie-app)** — React · TMDB API
-Film search on a public REST API: dynamic filtering and async state handling.
+### [cine-taste](https://github.com/SitrakaRasata/cine-taste) — a ranking that decays on its own
+
+A movie's score is the attention it has received, each interaction discounted by
+how long ago it happened:
+
+$$S(t) = \sum_i w_i\, e^{-\lambda (t - t_i)}, \qquad \lambda = \frac{\ln 2}{t_{1/2}}$$
+
+Factor the constant out and what is left is an accumulator that only ever needs an
+O(1) update. And since $e^{-\lambda t}$ is positive and shared by every movie, it
+cannot change their order — sorting by the accumulator is enough. There is no
+scheduled job anywhere in the codebase, because the ranking decays correctly on
+its own.
+
+Next.js 16 · Postgres · Drizzle &nbsp;·&nbsp; [live demo](https://cine-taste-sr.vercel.app)
+
+### [immo-grant](https://github.com/SitrakaRasata/immo-grant) — authorization that lives in the schema
+
+Every access rule is a Postgres policy; none of it is reimplemented in the
+application. The interesting case is not "I can see what I own" but delegation:
+an agent holds a mandate on a listing they do not own, and it expires on its own,
+without any row changing.
+
+|                      | SELECT | INSERT | UPDATE | DELETE |
+|---|:--:|:--:|:--:|:--:|
+| anonymous, published | yes | — | — | — |
+| anonymous, draft     | —   | — | — | — |
+| client               | yes | — | — | — |
+| owning agent         | yes | yes | yes | yes |
+| mandated agent       | yes | — | yes | — |
+| unrelated agent      | —   | — | — | — |
+
+Every cell above is one named test, run against the production schema applied
+verbatim inside an in-process PostgreSQL. No container, no external service.
+
+SvelteKit · Supabase · PGlite &nbsp;·&nbsp; [live demo](https://immo-grant.vercel.app)
+
+### [tournament-engine](https://github.com/SitrakaRasata/tournament-engine) — a format is a graph
+
+A format is a pure function of its entrants. It returns the matches to play and
+the edges saying where each winner *and each loser* goes next, and nothing else:
+
+```mermaid
+graph LR
+  M1[Match 1] --> SF[Semi final]
+  M2[Match 2] --> SF
+  M1 -.-> LB[Losers bracket]
+  M2 -.-> LB
+  SF --> F[Final]
+  LB --> F
+  classDef signal fill:#FBBF24,stroke:#B45309,stroke-width:2px,color:#0D1117;
+  class F signal;
+```
+
+Solid edges carry the winner, dashed ones the loser. Everything downstream reads
+that graph and knows nothing about brackets: propagating a result, cascading a
+correction, computing live title odds, deciding the tournament is over. Adding a
+format is one file and one registry entry.
+
+NestJS · React · SQLite &nbsp;·&nbsp; 249 tests, no public demo — it runs from one Docker command
 
 ## Also
 
