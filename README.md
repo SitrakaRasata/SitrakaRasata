@@ -2,12 +2,14 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner.svg">
     <img src="assets/banner-light.svg" width="100%"
-         alt="A terminal session. The command whoami returns: Sitraka Rasatarivony, full stack, system design.">
+         alt="A terminal session. The command whoami returns: Sitraka Rasatarivony, full-stack TypeScript developer.">
   </picture>
 </div>
 
-Three years shipping backend and frontend systems to production, from architecture
-to continuous delivery. Antananarivo, Madagascar.
+Three years in production, from backend architecture to continuous delivery. NestJS
+and Node.js on the server, React and Next.js on the client, PostgreSQL underneath.
+API security and secrets handling applied from the design phase, not bolted on after.
+Antananarivo, Madagascar.
 
 Three projects follow. Each had one thing it had to get right, and that thing is what
 its section shows.
@@ -106,30 +108,57 @@ no public demo — it runs from one Docker command
 
 ---
 
-### What I have shipped for other people
+### Where I have worked
 
-- **Cut a VMware monitoring app's data load from ~4s to 300–500ms** by rewriting its
-  backend in FastAPI — vSphere REST for routine operations, pyVmomi for the advanced
-  SOAP SDK — with caching and ClickHouse query optimization. *Stellar-IX (Axian Group)*
-- **Shipped 10+ full-stack modules to production** with Docker CI/CD and systematic
-  code reviews; brought TypeScript to new modules on a legacy ejs/Node codebase.
-  Team of 10, Agile.
-- **Built the full backoffice of an e-learning platform** for a European client, in a
-  team of 8. *Internship — Ingenosya*
-- **Co-founding [NEXTRI](https://nextrimg.github.io)**, a three-engineer collective,
-  as its technical lead — an internal application end to end: NestJS/TypeScript API,
-  PostgreSQL schema, CI/CD, licensing, DevSecOps from the design phase.
+**Co-founder and full-stack developer — [NEXTRI](https://nextrimg.github.io)**
+*Antananarivo · May 2026 – present*
 
-DevSecOps Professional — Practical DevSecOps, January 2024.
+A collective of three software engineers, hired as a team or as a single reinforcement.
+Its technical lead. We designed an internal application from scratch, the three of us —
+NestJS/TypeScript API, PostgreSQL schema, CI/CD pipeline, licensing — from design
+through tests, with REST endpoints secured and secrets handled from the design phase.
+It is an internal tool: not deployed, no users.
+
+**Full-stack application developer — Stellar-IX (Axian Group)**
+*Antananarivo · September 2022 – January 2025*
+
+Cut a VMware monitoring application's average data load from 4s to 300–500ms by
+rewriting its backend in FastAPI — vSphere REST for routine operations, pyVmomi where
+the SOAP SDK was required — with caching and ClickHouse query optimisation.
+
+Shipped more than ten full-stack modules to production with Docker CI/CD and
+systematic code review, after getting TypeScript accepted for every new module on a
+codebase that ran on legacy ejs and Node. That argument took several team discussions,
+and it is the reason the title above says TypeScript. Contributed to the team's
+technical decisions — architecture, data patterns, code quality — in a
+ten-person multidisciplinary team working Agile.
+
+**Mobile developer, internship — Ingenosya Madagascar**
+*Antananarivo · August 2021 – February 2022*
+
+Built the entire backoffice of an audio-visual e-learning platform, from scratch, for
+a European client, in a team of eight. Followed it from design to delivery: client
+meetings, then successive releases to staging, pre-production and production.
+
+### Education and training
+
+**Master MIAGE** — Mobiquity, Databases and Systems Integration (MBDS).
+Université Côte d'Azur & IT University, Antananarivo · 2022 – 2025.
+**Bachelor in computer science**, Web and Design. IT University, Antananarivo · 2018 – 2022.
+
+**DevSecOps Professional** — Practical DevSecOps, January 2024. A three-day
+instructor-led course with no examination, so: a course, not a certification.
 
 ### The stack
 
-TypeScript and NestJS on the server, React and Next.js on the client, PostgreSQL
-underneath. Java and Spring Boot, Python with FastAPI and Flask, Express. Angular
-before React. MySQL, MongoDB and ClickHouse alongside PostgreSQL. Docker, Nginx,
-Linux, and CI/CD pipelines I maintain rather than inherit.
-
-AI-assisted development every day (Claude Code).
+**Main** — TypeScript · React · NestJS · PostgreSQL
+**Backend beyond it** — Node.js with Express · Java with Spring Boot · Python with FastAPI and Flask
+**Frontend** — React · Next.js · Angular
+**Data** — PostgreSQL · MySQL · MongoDB · ClickHouse
+**API and security** — REST design · endpoint hardening · secrets handling · DevSecOps
+**DevOps** — Docker · CI/CD · Git
+**Architecture and quality** — system design · clean code · refactoring · code review · tests
+**AI-assisted development** — Claude Code, for code, tests and documentation
 
 ---
 
@@ -151,4 +180,4 @@ branch each time, so no machine noise ever reaches this history.
 
 [LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; rasatasitraka2@gmail.com
 
-*Malagasy (native) · French (fluent) · English (professional, written)*
+*Malagasy (native) · French (fluent) · English (intermediate to professional, written)*
