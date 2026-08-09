@@ -9,15 +9,12 @@
 Three years shipping backend and frontend systems to production, from architecture
 to continuous delivery. Antananarivo, Madagascar.
 
-The three projects below are the ones worth opening. Each had one thing it had to
-get right, and that thing is what the section shows.
+Three projects follow. Each had one thing it had to get right, and that thing is what
+its section shows.
 
 ---
 
-<details>
-<summary><b>cine-taste</b> &nbsp;— a trending ranking that decays on its own, with no scheduled job anywhere in the codebase</summary>
-
-<br>
+### cine-taste — a trending ranking that decays on its own, with no scheduled job anywhere in the codebase
 
 A movie's score is the attention it has received, each interaction discounted by
 how long ago it happened:
@@ -47,12 +44,7 @@ Next.js 16 · Postgres · Drizzle &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/cine-taste) &nbsp;·&nbsp;
 [live](https://cine-taste-sr.vercel.app)
 
-</details>
-
-<details>
-<summary><b>immo-grant</b> &nbsp;— every access rule lives in the Postgres schema, and a delegated mandate expires without any row changing</summary>
-
-<br>
+### immo-grant — every access rule lives in the Postgres schema, and a delegated mandate expires without any row changing
 
 The textbook case, "I can see what I own", proves nothing. The one worth building is
 delegation: an agent holds a mandate on a listing they do not own, and it lapses on
@@ -80,12 +72,7 @@ SvelteKit · Supabase · PGlite &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/immo-grant) &nbsp;·&nbsp;
 [live](https://immo-grant.vercel.app)
 
-</details>
-
-<details>
-<summary><b>tournament-engine</b> &nbsp;— a format is a pure function returning a graph, so no <code>if (format === …)</code> exists anywhere else</summary>
-
-<br>
+### tournament-engine — a format is a pure function returning a graph, so no `if (format === …)` exists anywhere else
 
 A format takes its entrants and returns the matches to play plus the edges saying
 where each winner *and each loser* goes next. Nothing else.
@@ -117,14 +104,9 @@ NestJS · React · SQLite &nbsp;·&nbsp; 249 tests &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/tournament-engine) &nbsp;·&nbsp;
 no public demo — it runs from one Docker command
 
-</details>
-
 ---
 
-<details>
-<summary>What I have shipped for other people</summary>
-
-<br>
+### What I have shipped for other people
 
 - **Cut a VMware monitoring app's data load from ~4s to 300–500ms** by rewriting its
   backend in FastAPI — vSphere REST for routine operations, pyVmomi for the advanced
@@ -140,20 +122,13 @@ no public demo — it runs from one Docker command
 
 DevSecOps Professional — Practical DevSecOps, January 2024.
 
-</details>
-
-<details>
-<summary>The rest of the stack, beyond the four on the banner</summary>
-
-<br>
+### The rest of the stack, beyond the four on the banner
 
 Java and Spring Boot, Python with FastAPI and Flask, Express. Angular before React.
 MySQL, MongoDB and ClickHouse alongside PostgreSQL. Docker, Nginx, Linux, and CI/CD
 pipelines I maintain rather than inherit.
 
 AI-assisted development every day (Claude Code).
-
-</details>
 
 ---
 
