@@ -157,6 +157,22 @@ AI-assisted development every day (Claude Code).
 
 ---
 
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/SitrakaRasata/SitrakaRasata/metrics/latency.svg">
+    <img src="https://raw.githubusercontent.com/SitrakaRasata/SitrakaRasata/metrics/latency-light.svg" width="100%"
+         alt="Median response time of the two live demos, measured every six hours from GitHub's runners.">
+  </picture>
+</div>
+
+Both demos are probed every six hours from GitHub's runners, five requests each, and
+the figure above is the median — a measurement, not a claim. A failed probe breaks the
+line rather than being drawn as a fast response.
+[The workflow](.github/workflows/metrics.yml) rewrites a single-commit `metrics`
+branch each time, so no machine noise ever reaches this history.
+
+---
+
 [LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; rasatasitraka2@gmail.com
 
 *Malagasy (native) · French (fluent) · English (professional, written)*

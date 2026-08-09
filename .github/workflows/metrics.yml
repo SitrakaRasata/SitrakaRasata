@@ -1,0 +1,55 @@
+name: metrics
+
+# Publishes to a `metrics` branch that is rewritten from scratch on every run, so
+# this repository keeps exactly one machine commit rather than one per reading.
+# The schedule only fires from the default branch; the push trigger is what makes
+# the workflow testable from a feature branch.
+
+on:
+  push:
+    branches: [profile-duotone]
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: metrics
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Carry over the previous readings
+        run: |
+          mkdir -p out
+          if git ls-remote --exit-code --heads origin metrics >/dev/null 2>&1; then
+            git fetch --depth=1 origin metrics
+            git show FETCH_HEAD:history.json > out/history.json
+          else
+            echo '[]' > out/history.json
+          fi
+          node -e "console.log('carried', JSON.parse(require('fs').readFileSync('out/history.json','utf8')).length, 'readings')"
+
+      - name: Measure
+        run: node scripts/measure.mjs out
+
+      - name: Publish
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd out
+          git init -q -b metrics
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -q -m "Latency readings, $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" metrics
