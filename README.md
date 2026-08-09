@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner.svg">
     <img src="assets/banner-light.svg" width="100%"
-         alt="Sitraka Rasatarivony — Full Stack Developer, System Design. 4s to 300ms, 10+ modules in production, DevSecOps. Core stack: TypeScript, NestJS, React, PostgreSQL.">
+         alt="A terminal session. The command whoami returns: Sitraka Rasatarivony, full stack, system design.">
   </picture>
 </div>
 
@@ -122,11 +122,12 @@ no public demo — it runs from one Docker command
 
 DevSecOps Professional — Practical DevSecOps, January 2024.
 
-### The rest of the stack, beyond the four on the banner
+### The stack
 
-Java and Spring Boot, Python with FastAPI and Flask, Express. Angular before React.
-MySQL, MongoDB and ClickHouse alongside PostgreSQL. Docker, Nginx, Linux, and CI/CD
-pipelines I maintain rather than inherit.
+TypeScript and NestJS on the server, React and Next.js on the client, PostgreSQL
+underneath. Java and Spring Boot, Python with FastAPI and Flask, Express. Angular
+before React. MySQL, MongoDB and ClickHouse alongside PostgreSQL. Docker, Nginx,
+Linux, and CI/CD pipelines I maintain rather than inherit.
 
 AI-assisted development every day (Claude Code).
 
