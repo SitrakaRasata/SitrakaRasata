@@ -6,72 +6,18 @@
   </picture>
 </div>
 
-Three years building and shipping backend and frontend systems in production,
-from architecture to continuous delivery. Based in Antananarivo, Madagascar.
+Three years shipping backend and frontend systems to production, from architecture
+to continuous delivery. Antananarivo, Madagascar.
 
-## What I work with
+The three projects below are the ones worth opening. Each had one thing it had to
+get right, and that thing is what the section shows.
 
-NestJS and Node.js on the server, React and Next.js on the client, PostgreSQL as
-the backbone. API security and secrets handling built in from the design phase.
-AI-assisted development every day (Claude Code).
+---
 
-## Selected work
+<details>
+<summary><b>cine-taste</b> &nbsp;— a trending ranking that decays on its own, with no scheduled job anywhere in the codebase</summary>
 
-- **Cut a VMware monitoring app's data load from ~4s to 300–500ms** by rewriting
-  its backend in FastAPI — vSphere REST for routine operations, pyVmomi for the
-  advanced SOAP SDK — with caching and ClickHouse query optimization.
-  *Stellar-IX (Axian Group)*
-- **Shipped 10+ full-stack modules to production** with Docker CI/CD and
-  systematic code reviews; brought TypeScript to new modules on a legacy ejs/Node
-  codebase. Team of 10, Agile.
-- **Built the full backoffice of an e-learning platform** for a European client,
-  in a team of 8. *Internship — Ingenosya*
-- **Co-founding [NEXTRI](https://nextrimg.github.io/nextri_portfolio/)**, a
-  three-engineer collective — designing an internal application end to end
-  (NestJS/TypeScript API, PostgreSQL schema, CI/CD, licensing), with a DevSecOps
-  approach from the design phase.
-
-## Tech
-
-**Languages** &nbsp;
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-
-**Backend** &nbsp;
-![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white)
-
-**Frontend** &nbsp;
-![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white)
-
-**Data** &nbsp;
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
-![ClickHouse](https://img.shields.io/badge/ClickHouse-FFCC01?style=flat-square&logo=clickhouse&logoColor=black)
-
-**Infra & quality** &nbsp;
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
-![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white)
-&nbsp;·&nbsp; CI/CD · REST API design · DevSecOps · testing
-
-**AI-assisted** &nbsp; Claude Code (code, tests, docs)
-
-## Projects
-
-Three of them. Each is here for one idea it had to get right.
-
-### [cine-taste](https://github.com/SitrakaRasata/cine-taste) — a ranking that decays on its own
+<br>
 
 A movie's score is the attention it has received, each interaction discounted by
 how long ago it happened:
@@ -79,19 +25,38 @@ how long ago it happened:
 $$S(t) = \sum_i w_i\, e^{-\lambda (t - t_i)}, \qquad \lambda = \frac{\ln 2}{t_{1/2}}$$
 
 Factor the constant out and what is left is an accumulator that only ever needs an
-O(1) update. And since $e^{-\lambda t}$ is positive and shared by every movie, it
-cannot change their order — sorting by the accumulator is enough. There is no
-scheduled job anywhere in the codebase, because the ranking decays correctly on
-its own.
+O(1) update — no rescan of history, ever. And since $e^{-\lambda t}$ is positive and
+shared by every movie, it cannot change their order: sorting by the accumulator is
+enough. That is why nothing has to run on a schedule. The ranking decays correctly
+by construction.
 
-Next.js 16 · Postgres · Drizzle &nbsp;·&nbsp; [live demo](https://cine-taste-sr.vercel.app)
+The accumulator overflows a float64 quickly, so it is stored as $\log A$ and updated
+with log-sum-exp, which keeps it finite for decades.
 
-### [immo-grant](https://github.com/SitrakaRasata/immo-grant) — authorization that lives in the schema
+Three half-lives run in parallel, giving three views of the same journal:
 
-Every access rule is a Postgres policy; none of it is reimplemented in the
-application. The interesting case is not "I can see what I own" but delegation:
-an agent holds a mandate on a listing they do not own, and it expires on its own,
-without any row changing.
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/decay.svg">
+    <img src="assets/decay-light.svg" width="100%"
+         alt="Three exponential decay curves over fourteen days, with half-lives of one hour, one day and one week. Each crosses half its original score at its own half-life.">
+  </picture>
+</div>
+
+Next.js 16 · Postgres · Drizzle &nbsp;·&nbsp;
+[repo](https://github.com/SitrakaRasata/cine-taste) &nbsp;·&nbsp;
+[live](https://cine-taste-sr.vercel.app)
+
+</details>
+
+<details>
+<summary><b>immo-grant</b> &nbsp;— every access rule lives in the Postgres schema, and a delegated mandate expires without any row changing</summary>
+
+<br>
+
+The textbook case, "I can see what I own", proves nothing. The one worth building is
+delegation: an agent holds a mandate on a listing they do not own, and it lapses on
+its own. Every cell below is one named test.
 
 |                      | SELECT | INSERT | UPDATE | DELETE |
 |---|:--:|:--:|:--:|:--:|
@@ -102,15 +67,28 @@ without any row changing.
 | mandated agent       | yes | — | yes | — |
 | unrelated agent      | —   | — | — | — |
 
-Every cell above is one named test, run against the production schema applied
-verbatim inside an in-process PostgreSQL. No container, no external service.
+The suite applies the production schema verbatim inside an in-process PostgreSQL.
+No container, no external service, no server to start.
 
-SvelteKit · Supabase · PGlite &nbsp;·&nbsp; [live demo](https://immo-grant.vercel.app)
+Three traps it walks into on purpose: policy recursion between two tables, which
+needs a `SECURITY DEFINER` function to break; the discipline that function then owes,
+since it is an RLS bypass; and the fact that `GRANT` is not RLS — a mandated agent may
+edit a listing but must not reassign it, which `WITH CHECK` cannot express because it
+only ever sees the row as it will be, never as it was.
 
-### [tournament-engine](https://github.com/SitrakaRasata/tournament-engine) — a format is a graph
+SvelteKit · Supabase · PGlite &nbsp;·&nbsp;
+[repo](https://github.com/SitrakaRasata/immo-grant) &nbsp;·&nbsp;
+[live](https://immo-grant.vercel.app)
 
-A format is a pure function of its entrants. It returns the matches to play and
-the edges saying where each winner *and each loser* goes next, and nothing else:
+</details>
+
+<details>
+<summary><b>tournament-engine</b> &nbsp;— a format is a pure function returning a graph, so no <code>if (format === …)</code> exists anywhere else</summary>
+
+<br>
+
+A format takes its entrants and returns the matches to play plus the edges saying
+where each winner *and each loser* goes next. Nothing else.
 
 ```mermaid
 graph LR
@@ -124,24 +102,61 @@ graph LR
   class F signal;
 ```
 
-Solid edges carry the winner, dashed ones the loser. Everything downstream reads
-that graph and knows nothing about brackets: propagating a result, cascading a
-correction, computing live title odds, deciding the tournament is over. Adding a
-format is one file and one registry entry.
+Solid edges carry the winner, dashed ones the loser. Everything downstream reads that
+graph and knows nothing about brackets: propagating a result, cascading a correction
+through every match it invalidates, computing live title odds, deciding the tournament
+is over. Adding a format is one file and one registry entry.
 
-NestJS · React · SQLite &nbsp;·&nbsp; 249 tests, no public demo — it runs from one Docker command
+The odds are exact on edge formats — one dynamic-programming pass over the DAG, each
+pairing weighted by the Elo expected score, no sampling error. Round robin has no
+edges, so outcomes are enumerated exactly while few enough remain and sampled beyond
+that. Both are covered by property tests asserting the probabilities sum to one and
+stay monotone in rating.
 
-## Also
+NestJS · React · SQLite &nbsp;·&nbsp; 249 tests &nbsp;·&nbsp;
+[repo](https://github.com/SitrakaRasata/tournament-engine) &nbsp;·&nbsp;
+no public demo — it runs from one Docker command
 
-DevSecOps Professional — course completion, Practical DevSecOps (Jan 2024).
-Currently deepening system design and high-performance data processing.
+</details>
 
-## Contact
+---
+
+<details>
+<summary>What I have shipped for other people</summary>
+
+<br>
+
+- **Cut a VMware monitoring app's data load from ~4s to 300–500ms** by rewriting its
+  backend in FastAPI — vSphere REST for routine operations, pyVmomi for the advanced
+  SOAP SDK — with caching and ClickHouse query optimization. *Stellar-IX (Axian Group)*
+- **Shipped 10+ full-stack modules to production** with Docker CI/CD and systematic
+  code reviews; brought TypeScript to new modules on a legacy ejs/Node codebase.
+  Team of 10, Agile.
+- **Built the full backoffice of an e-learning platform** for a European client, in a
+  team of 8. *Internship — Ingenosya*
+- **Co-founding [NEXTRI](https://nextrimg.github.io)**, a three-engineer collective,
+  as its technical lead — an internal application end to end: NestJS/TypeScript API,
+  PostgreSQL schema, CI/CD, licensing, DevSecOps from the design phase.
+
+DevSecOps Professional — Practical DevSecOps, January 2024.
+
+</details>
+
+<details>
+<summary>The rest of the stack, beyond the four on the banner</summary>
+
+<br>
+
+Java and Spring Boot, Python with FastAPI and Flask, Express. Angular before React.
+MySQL, MongoDB and ClickHouse alongside PostgreSQL. Docker, Nginx, Linux, and CI/CD
+pipelines I maintain rather than inherit.
+
+AI-assisted development every day (Claude Code).
+
+</details>
+
+---
 
 [LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; rasatasitraka2@gmail.com
 
 *Malagasy (native) · French (fluent) · English (professional, written)*
-
-<br>
-
-![Top languages](https://github-readme-stats.shion.dev/api/top-langs/?username=SitrakaRasata&layout=compact&hide_border=true&hide=html,css,scss)
