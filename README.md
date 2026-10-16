@@ -6,38 +6,32 @@
   </picture>
 </div>
 
-Three years of experience, internship included, from backend architecture to
-continuous delivery. NestJS and Node.js on the server, React and Next.js on the
-client, PostgreSQL underneath. Antananarivo, Madagascar.
+Full-stack developer in Antananarivo, Madagascar, with three years of experience,
+internship included. I mostly work with NestJS and Node.js on the server, React and
+Next.js on the client, and PostgreSQL underneath.
 
-Three projects follow. Each had one thing it had to get right, and that thing is what
-its section shows.
+The three projects below each started with a problem I did not know how to solve.
+I read, compared what others had done, and picked the idea that fit. None of it is
+my invention. What I can explain is the problem, the idea, and why it fit.
 
 ---
 
-### cine-taste — a trending ranking that decays on its own, with no scheduled job anywhere in the codebase
+### cine-taste · a "trending" ranking that keeps itself up to date
 
-A movie's score is the attention it has received, each interaction discounted by
-how long ago it happened:
+Every view or like a movie gets counts a little less as time passes, the same way
+yesterday's news slips down a front page. While reading about how sites build their
+trending lists, I came across exponential decay: each interaction loses half its
+weight after a fixed delay, called the half-life.
 
-$$S(t) = \sum_i w_i\, e^{-\lambda (t - t_i)}, \qquad \lambda = \frac{\ln 2}{t_{1/2}}$$
-
-Factor the constant out and what is left is an accumulator that only ever needs an
-O(1) update — no rescan of history, ever. And since $e^{-\lambda t}$ is positive and
-shared by every movie, it cannot change their order: sorting by the accumulator is
-enough. That is why nothing has to run on a schedule. The ranking decays correctly
-by construction.
-
-The accumulator overflows a float64 quickly, so it is stored as $\log A$ and updated
-with log-sum-exp, which keeps it finite for decades.
-
-Three half-lives run in parallel, giving three views of the same journal:
+The useful part is what it removes. The ranking stays correct on its own, so there is
+no nightly job recomputing it. Three half-lives run side by side, which gives three
+lists from the same data: right now, today, this week.
 
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/decay.svg">
     <img src="assets/decay-light.svg" width="100%"
-         alt="Three exponential decay curves over fourteen days, with half-lives of one hour, one day and one week. Each crosses half its original score at its own half-life.">
+         alt="Three decay curves over fourteen days, with half-lives of one hour, one day and one week. Each loses half its score at its own half-life.">
   </picture>
 </div>
 
@@ -45,38 +39,36 @@ Next.js 16 · Postgres · Drizzle &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/cine-taste) &nbsp;·&nbsp;
 [live](https://cine-taste-sr.vercel.app)
 
-### immo-grant — every access rule lives in the Postgres schema, and a delegated mandate expires without any row changing
+### immo-grant · access rules kept in the database
 
-The textbook case, "I can see what I own", proves nothing. The one worth building is
-delegation: an agent holds a mandate on a listing they do not own, and it lapses on
-its own. Every cell below is one named test.
+A real estate app where the database itself decides who can see or edit a listing,
+using PostgreSQL row-level security. The application code does not repeat those rules.
 
-|                      | SELECT | INSERT | UPDATE | DELETE |
+The case I cared about was delegation. An agent can manage a listing they do not own,
+under a mandate, and that right ends by itself when the mandate expires. Each cell of
+this table is a test:
+
+|                      | see | create | edit | delete |
 |---|:--:|:--:|:--:|:--:|
-| anonymous, published | yes | — | — | — |
-| anonymous, draft     | —   | — | — | — |
+| visitor, published listing | yes | — | — | — |
+| visitor, draft       | —   | — | — | — |
 | client               | yes | — | — | — |
 | owning agent         | yes | yes | yes | yes |
 | mandated agent       | yes | — | yes | — |
-| unrelated agent      | —   | — | — | — |
+| other agent          | —   | — | — | — |
 
-The suite applies the production schema verbatim inside an in-process PostgreSQL.
-No container, no external service, no server to start.
-
-Three traps it walks into on purpose: policy recursion between two tables, which
-needs a `SECURITY DEFINER` function to break; the discipline that function then owes,
-since it is an RLS bypass; and the fact that `GRANT` is not RLS — a mandated agent may
-edit a listing but must not reassign it, which `WITH CHECK` cannot express because it
-only ever sees the row as it will be, never as it was.
+The tests run against a real PostgreSQL started in memory (PGlite), so there is
+nothing to install. Row-level security has a few well-known traps. I ran into them
+one by one, and the tests now check them.
 
 SvelteKit · Supabase · PGlite &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/immo-grant) &nbsp;·&nbsp;
 [live](https://immo-grant.vercel.app)
 
-### tournament-engine — a format is a pure function returning a graph, so no `if (format === …)` exists anywhere else
+### tournament-engine · one description per tournament format
 
-A format takes its entrants and returns the matches to play plus the edges saying
-where each winner *and each loser* goes next. Nothing else.
+Each format is written once, as a small map of matches: where the winner goes next,
+and where the loser goes.
 
 ```mermaid
 graph LR
@@ -86,78 +78,74 @@ graph LR
   M2 -.-> LB
   SF --> F[Final]
   LB --> F
-  classDef signal fill:#C8F169,stroke:#121212,stroke-width:2px,color:#121212;
+  classDef signal fill:#FF4F6E,stroke:#0A1628,stroke-width:2px,color:#0A1628;
   class F signal;
 ```
 
-Solid edges carry the winner, dashed ones the loser. Everything downstream reads that
-graph and knows nothing about brackets: propagating a result, cascading a correction
-through every match it invalidates, computing live title odds, deciding the tournament
-is over. Adding a format is one file and one registry entry.
+Solid arrows carry the winner, dashed ones the loser. The rest of the app only reads
+that map. Recording a result, fixing a wrong score, knowing when the tournament is
+over: none of it needs to know which format is being played. Adding a format means
+adding one file.
 
-The odds are exact on edge formats — one dynamic-programming pass over the DAG, each
-pairing weighted by the Elo expected score, no sampling error. Round robin has no
-edges, so outcomes are enumerated exactly while few enough remain and sampled beyond
-that. Both are covered by property tests asserting the probabilities sum to one and
-stay monotone in rating.
+The app also shows each player's chances of winning, based on Elo ratings, the
+system chess uses.
 
 NestJS · React · SQLite &nbsp;·&nbsp; 249 tests &nbsp;·&nbsp;
 [repo](https://github.com/SitrakaRasata/tournament-engine) &nbsp;·&nbsp;
-no public demo — it runs from one Docker command
+no public demo, it runs with one Docker command
 
 ---
 
 ### Where I have worked
 
-**Co-founder and full-stack developer — [NEXTRI](https://nextrimg.github.io)**
+**Co-founder and full-stack developer · [NEXTRI](https://nextrimg.github.io)**
 *Antananarivo · May 2026 – present*
 
-A collective of three software engineers. With the other two, I designed and built a
+NEXTRI is a collective of three software engineers. Together we designed and built a
 modular management application: users, groups and permissions, invoicing with PDF
-output, dashboards. REST API in NestJS and TypeScript on Fastify, with PostgreSQL
-through Prisma and a Redis cache; interface in Next.js and React. It is not deployed
-and has no users yet.
+output, dashboards. The API is in NestJS and TypeScript on Fastify, with PostgreSQL
+through Prisma and a Redis cache. The interface is in Next.js and React. It is not
+deployed yet and has no users.
 
-**Application developer — Stellar-IX (Axian Group)**
+**Application developer · Stellar-IX (Axian Group)**
 *Antananarivo · September 2022 – January 2025*
 
-Cut a VMware monitoring application's average data load from 4s to 300–500ms by
-rewriting its backend in FastAPI — vSphere REST for routine operations, pyVmomi where
-the SOAP SDK was required — with caching.
+I rewrote the backend of a VMware monitoring application in FastAPI, with caching,
+and its average data load dropped from 4s to 300–500ms. Routine operations went
+through the vSphere REST API, and pyVmomi covered what only the SOAP SDK could do.
 
-Shipped more than ten full-stack modules to production with Docker CI/CD and
-systematic code review, after getting TypeScript accepted for every new module on a
-codebase that ran on legacy ejs and Node. That argument took several team discussions,
-and it is the reason the title above says TypeScript. Contributed to the team's
-technical decisions — architecture, data patterns, code quality — in a
-ten-person multidisciplinary team working Agile.
+I shipped more than ten full-stack modules to production, with Docker CI/CD and code
+review on every change. The codebase ran on legacy ejs and Node, and I argued for
+TypeScript on every new module. It took several team discussions before it was
+accepted. I also took part in the team's technical decisions on architecture, data
+patterns and code quality, in a team of ten working Agile.
 
-**Developer, internship — Ingenosya Madagascar**
+**Developer, internship · Ingenosya Madagascar**
 *Antananarivo · August 2021 – February 2022*
 
-Built the administration space and the web services of an audio-visual e-learning
-platform, from scratch, for a client based in Paris, in a team of eight. Took it from
-design to pre-production, client meetings included.
+In a team of eight, I built the administration space and the web services of an
+audio-visual e-learning platform for a client in Paris. We started from scratch and
+took it to pre-production. I attended the client meetings.
 
 ### Education and training
 
-**Master MIAGE** — Mobiquity, Databases and Systems Integration (MBDS).
+**Master MIAGE**, Mobiquity, Databases and Systems Integration (MBDS).
 Université Côte d'Azur & IT University, Antananarivo · 2022 – 2024.
 **Bachelor in computer science**, Web and Design. IT University, Antananarivo · 2018 – 2022.
 
-**DevSecOps Professional** — Practical DevSecOps, January 2024. A three-day
-instructor-led course with no examination, so: a course, not a certification.
+**DevSecOps Professional**, Practical DevSecOps, January 2024. A three-day course
+with an instructor and no exam, so a course rather than a certification.
 
 ### The stack
 
-**Main** — TypeScript · Node.js · NestJS · React · Next.js · PostgreSQL
-**Backend and API** — Express · REST API design · WebSocket · OpenAPI
-**Frontend** — Angular · Tailwind CSS
-**Databases and ORMs** — MongoDB · MySQL · ClickHouse · Redis · Prisma · Mongoose
-**DevOps** — Docker · CI/CD (GitHub Actions)
-**Quality** — code review · unit and integration tests
-**Other languages** — Python (FastAPI) · Java (Spring Boot, Jakarta EE)
-**Methods and AI** — Agile (Scrum) · AI-assisted development (Claude Code; aider with local models through Ollama)
+**Main** · TypeScript · Node.js · NestJS · React · Next.js · PostgreSQL
+**Backend and API** · Express · REST API design · WebSocket · OpenAPI
+**Frontend** · Angular · Tailwind CSS
+**Databases and ORMs** · MongoDB · MySQL · ClickHouse · Redis · Prisma · Mongoose
+**DevOps** · Docker · CI/CD (GitHub Actions)
+**Quality** · code review · unit and integration tests
+**Other languages** · Python (FastAPI) · Java (Spring Boot, Jakarta EE)
+**Methods and AI** · Agile (Scrum) · AI-assisted development (Claude Code; aider with local models through Ollama)
 
 ---
 
@@ -165,18 +153,16 @@ instructor-led course with no examination, so: a course, not a certification.
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/SitrakaRasata/SitrakaRasata/metrics/latency.svg">
     <img src="https://raw.githubusercontent.com/SitrakaRasata/SitrakaRasata/metrics/latency-light.svg" width="100%"
-         alt="Median response time of the two live demos, measured every six hours from GitHub's runners.">
+         alt="Median response time of the two live demos, measured every six hours from GitHub's servers.">
   </picture>
 </div>
 
-Both demos are probed every six hours from GitHub's runners, five requests each, and
-the figure above is the median — a measurement, not a claim. A failed probe breaks the
-line rather than being drawn as a fast response.
-[The workflow](.github/workflows/metrics.yml) rewrites a single-commit `metrics`
-branch each time, so no machine noise ever reaches this history.
+Both live demos are checked every six hours from GitHub's servers. The chart shows
+the median of five requests, and a failed check leaves a gap in the line instead of a
+fake fast response. [The workflow](.github/workflows/metrics.yml) does the measuring.
 
 ---
 
-[LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; rasatasitraka2@gmail.com
+[LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; sitraka.rasatarivony@gmail.com
 
 *Malagasy (native) · French (fluent) · English (intermediate to professional, written)*
