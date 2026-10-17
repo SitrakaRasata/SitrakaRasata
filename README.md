@@ -114,11 +114,11 @@ I rewrote the backend of a VMware monitoring application in FastAPI, with cachin
 and its average data load dropped from 4s to 300–500ms. Routine operations went
 through the vSphere REST API, and pyVmomi covered what only the SOAP SDK could do.
 
-I shipped more than ten full-stack modules to production, with Docker CI/CD and code
-review on every change. The codebase ran on legacy ejs and Node, and I argued for
-TypeScript on every new module. It took several team discussions before it was
-accepted. I also took part in the team's technical decisions on architecture, data
-patterns and code quality, in a team of ten working Agile.
+I built the time-series statistics for virtual machines in ClickHouse, and a generic
+table-and-chart module (AG Grid) for the internal dashboard. The codebase ran on legacy
+ejs and Node, and I argued for TypeScript on every new module. It took several team
+discussions before it was accepted. With the team, I then put Docker and CI/CD
+pipelines on every project, in a team of eleven.
 
 **Developer, internship · Ingenosya Madagascar**
 *Antananarivo · August 2021 – February 2022*
@@ -143,9 +143,9 @@ with an instructor and no exam, so a course rather than a certification.
 **Frontend** · Angular · Tailwind CSS
 **Databases and ORMs** · MongoDB · MySQL · ClickHouse · Redis · Prisma · Mongoose
 **DevOps** · Docker · CI/CD (GitHub Actions)
-**Quality** · code review · unit and integration tests
+**Quality** · unit and integration tests
 **Other languages** · Python (FastAPI) · Java (Spring Boot, Jakarta EE)
-**Methods and AI** · Agile (Scrum) · AI-assisted development (Claude Code; aider with local models through Ollama)
+**AI** · AI-assisted development (Claude Code; aider with local models through Ollama)
 
 ---
 
