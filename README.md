@@ -6,7 +6,7 @@
   </picture>
 </div>
 
-Full-stack developer in Antananarivo, Madagascar, with three years of experience,
+Full-stack developer in Antananarivo, Madagascar, with three years of experience, <!-- @fact ID-05 -->
 internship included. I mostly work with NestJS and Node.js on the server, React and
 Next.js on the client, and PostgreSQL underneath.
 
@@ -90,7 +90,7 @@ adding one file.
 The app also shows each player's chances of winning, based on Elo ratings, the
 system chess uses.
 
-NestJS · React · SQLite &nbsp;·&nbsp; 249 tests &nbsp;·&nbsp;
+NestJS · React · SQLite &nbsp;·&nbsp; 249 tests &nbsp;·&nbsp; <!-- @fact PRJ-TOUR-01 -->
 [repo](https://github.com/SitrakaRasata/tournament-engine) &nbsp;·&nbsp;
 no public demo, it runs with one Docker command
 
@@ -98,7 +98,7 @@ no public demo, it runs with one Docker command
 
 ### Where I have worked
 
-**Co-founder and full-stack developer · [NEXTRI](https://nextrimg.github.io)**
+**Co-founder and full-stack developer · [NEXTRI](https://nextrimg.github.io)** <!-- @fact NX-02 -->
 *Antananarivo · May 2026 – present*
 
 NEXTRI is a collective of three software engineers. Together we designed and built a
@@ -107,7 +107,7 @@ output, dashboards. The API is in NestJS and TypeScript on Fastify, with Postgre
 through Prisma and a Redis cache. The interface is in Next.js and React. It is not
 deployed yet and has no users.
 
-**Application developer · Stellar-IX (Axian Group)**
+**Application developer · Stellar-IX (Axian Group)** <!-- @fact EXP-STX-01 -->
 *Antananarivo · September 2022 – January 2025*
 
 I rewrote the backend of a VMware monitoring application in FastAPI, with caching,
@@ -163,6 +163,6 @@ fake fast response. [The workflow](.github/workflows/metrics.yml) does the measu
 
 ---
 
-[LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; sitraka.rasatarivony@gmail.com
+[LinkedIn](https://linkedin.com/in/sitraka-rasata) &nbsp;·&nbsp; sitraka.rasatarivony@gmail.com <!-- @fact ID-10 ID-06 -->
 
 *Malagasy (native) · French (fluent) · English (intermediate to professional, written)*
